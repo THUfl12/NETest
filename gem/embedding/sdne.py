@@ -23,9 +23,10 @@ import keras.regularizers as Reg
 from keras.optimizers import SGD, Adam
 from keras import backend as KBack
 
+import theano
 from theano.printing import debugprint as dbprint, pprint
 from time import time
-
+theano.config.mode = 'FAST_COMPILE'
 class SDNE(StaticGraphEmbedding):
 
 	def __init__(self, d, beta, alpha, nu1, nu2, K, n_units, rho, n_iter, xeta, n_batch, modelfile=None, weightfile=None, node_frac=1, n_walks_per_node=5, len_rw=2, savefilesuffix=None, subsample=False):
@@ -149,6 +150,7 @@ class SDNE(StaticGraphEmbedding):
 		sgd = SGD(lr=self._xeta, decay=1e-5, momentum=0.99, nesterov=True)
 		# adam = Adam(lr=self._xeta, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
 		self._model.compile(optimizer=sgd, loss=[weighted_mse_x, weighted_mse_x, weighted_mse_y], loss_weights=[1, 1, self._alpha])
+
 		# self._model.compile(optimizer=adam, loss=[weighted_mse_x, weighted_mse_x, weighted_mse_y], loss_weights=[1, 1, self._alpha])
 
 		# Structure data in the correct format for the SDNE model
