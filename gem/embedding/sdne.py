@@ -72,13 +72,13 @@ class SDNE(StaticGraphEmbedding):
 		self._len_rw = len_rw
 		self._savefilesuffix = savefilesuffix
 		self._subsample = subsample
-		self._num_iter = n_iter # max number of iterations during sgd (variable)		
+		self._num_iter = n_iter # max number of iterations during sgd (variable)
 		# self._node_num is number of nodes: initialized later in learn_embedding()
 		# self._encoder is the vertex->embedding model
 		# self._decoder is the embedding->vertex model
 		# self._autocoder is the vertex->(vertex,embedding) model
 		# self._model is the SDNE model to be trained (uses self._autoencoder internally)
-		
+
 
 	def get_method_name(self):
 		return self._method_name
@@ -100,7 +100,7 @@ class SDNE(StaticGraphEmbedding):
 		t1 = time()
 		S = (S + S.T)/2					# enforce S is symmetric
 		S -= np.diag(np.diag(S))		# enforce diagonal = 0
-		self._node_num = S.shape[0]		
+		self._node_num = S.shape[0]
 		n_edges = np.count_nonzero(S)	# Double counting symmetric edges deliberately to maintain autoencoder symmetry
 		# Create matrix B
 		B = np.ones(S.shape)
@@ -109,7 +109,7 @@ class SDNE(StaticGraphEmbedding):
 		# compute degree of each node
 		deg = np.sum(S!=0, 1)
 
-		
+
 		# Generate encoder, decoder and autoencoder
 		self._num_iter = self._n_iter
 		# If cannot use previous step information, initialize new models
@@ -118,7 +118,7 @@ class SDNE(StaticGraphEmbedding):
 		self._autoencoder = get_autoencoder(self._encoder, self._decoder)
 
 		# Initialize self._model
-		# Input	
+		# Input
 		x_in = Input(shape=(2*self._node_num,), name='x_in')
 		x1 = Lambda(lambda x: x[:,0:self._node_num], output_shape=(self._node_num,))(x_in)
 		x2 = Lambda(lambda x: x[:,self._node_num:2*self._node_num], output_shape=(self._node_num,))(x_in)
@@ -135,16 +135,16 @@ class SDNE(StaticGraphEmbedding):
 			''' Hack: This fn doesn't accept additional arguments. We use y_true to pass them.
 				y_pred: Contains x_hat - x
 				y_true: Contains [b, deg]
-			'''			
+			'''
 			return KBack.sum(KBack.square(y_pred * y_true[:,0:self._node_num]), axis=-1)/y_true[:,self._node_num]
 		def weighted_mse_y(y_true, y_pred):
 			''' Hack: This fn doesn't accept additional arguments. We use y_true to pass them.
 			y_pred: Contains y2 - y1
 			y_true: Contains s12
 			'''
-			min_batch_size = KBack.shape(y_true)[0]        
+			min_batch_size = KBack.shape(y_true)[0]
 			return KBack.reshape(KBack.sum(KBack.square(y_pred), axis=-1),[min_batch_size, 1]) * y_true
-		
+
 		# Model
 		self._model = Model(input=x_in, output=[x_diff1, x_diff2, y_diff])
 		sgd = SGD(lr=self._xeta, decay=1e-5, momentum=0.99, nesterov=True)
