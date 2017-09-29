@@ -2,6 +2,7 @@ from gem.embedding.gf import GraphFactorization as gf
 from gem.embedding.lle import LocallyLinearEmbedding as lle
 from gem.embedding.hope import HOPE
 from gem.embedding.lap import LaplacianEigenmaps as lap
+from gem.embedding.sdne import SDNE
 
 from gem.node2vec.main import parse_args as input_args
 from gem.node2vec.main import main as nv
@@ -38,6 +39,12 @@ print 'HOPE:\n\tTraining time: %f' % t
 embedding = lap(4)   # d
 Y, t = embedding.learn_embedding(graph=G, edge_f=None, is_weighted=True, no_python=True)
 print 'Laplacian Eigenmaps:\n\tTraining time: %f' % t
+
+# sdne
+embedding = SDNE(d=2, beta=5, alpha=1e-5, nu1=1e-6, nu2=1e-6, K=3, n_units=[50, 15,],
+                 rho=0.3, n_iter=1, xeta=0.01, n_batch=500, savefilesuffix='karate')
+Y, t = embedding.learn_embedding(graph=G, edge_f=None, is_weighted=True, no_python=True)
+print 'SDNE:\n\tTraining time: %f' % t
 
 # node2vec
 args = input_args(file_path='data/karate.edgelist', output_path='data/karate.emb')

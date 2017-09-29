@@ -187,19 +187,20 @@ class SDNE(StaticGraphEmbedding):
 		_, self._Y = self._autoencoder.predict(S, batch_size=self._n_batch)
 		t2 = time()
 		# Save the autoencoder and its weights
-		if(self._weightfile is not None):
-			saveweights(self._encoder, self._weightfile[0])
-			saveweights(self._decoder, self._weightfile[1])
-		if(self._modelfile is not None):
-			savemodel(self._encoder, self._modelfile[0])
-			savemodel(self._decoder, self._modelfile[1])		
-		if(self._savefilesuffix is not None):
-			saveweights(self._encoder, 'encoder_weights_'+self._savefilesuffix+'.hdf5')
-			saveweights(self._decoder, 'decoder_weights_'+self._savefilesuffix+'.hdf5')
-			savemodel(self._encoder, 'encoder_model_'+self._savefilesuffix+'.json')
-			savemodel(self._decoder, 'decoder_model_'+self._savefilesuffix+'.json')
-			# Save the embedding
-			np.savetxt('embedding_'+self._savefilesuffix+'.txt', self._Y)		
+		# if(self._weightfile is not None):
+		# 	saveweights(self._encoder, self._weightfile[0])
+		# 	saveweights(self._decoder, self._weightfile[1])
+		# if(self._modelfile is not None):
+		# 	savemodel(self._encoder, self._modelfile[0])
+		# 	savemodel(self._decoder, self._modelfile[1])
+		# if(self._savefilesuffix is not None):
+		# 	saveweights(self._encoder, 'encoder_weights_'+self._savefilesuffix+'.hdf5')
+		# 	saveweights(self._decoder, 'decoder_weights_'+self._savefilesuffix+'.hdf5')
+		# 	savemodel(self._encoder, 'encoder_model_'+self._savefilesuffix+'.json')
+		# 	savemodel(self._decoder, 'decoder_model_'+self._savefilesuffix+'.json')
+		# Save the embedding
+
+		np.savetxt('embedding_' + self._savefilesuffix + '.txt', self._Y)
 		return self._Y, (t2-t1)
 
 
@@ -250,17 +251,17 @@ class SDNE(StaticGraphEmbedding):
 			else:
 				return decoder.predict(embed, batch_size=self._n_batch)
 
-if __name__ == '__main__':
-	# load Zachary's Karate graph
-	edge_f = '../data/karate.edgelist'
-	G = graph_util.loadGraphFromEdgeListTxt(edge_f, directed=False)
-	G = G.to_directed()
-	res_pre = 'results/testKarate'
-	print 'Num nodes: %d, num edges: %d' % (G.number_of_nodes(), G.number_of_edges())
-	t1 = time()
-	embedding = SDNE(d=2, beta=5, alpha=1e-5, nu1=1e-6, nu2=1e-6, K=3, n_units=[50, 15,], rho=0.3, n_iter=1, xeta=0.01, n_batch=500, modelfile=['./intermediate/enc_model.json', './intermediate/dec_model.json'], weightfile=['./intermediate/enc_weights.hdf5', './intermediate/dec_weights.hdf5'])
-	embedding.learn_embedding(graph=G, edge_f=None, is_weighted=True, no_python=True)
-	print 'SDNE:\n\tTraining time: %f' % (time() - t1)
-
-	viz.plot_embedding2D(embedding.get_embedding(), di_graph=G, node_colors=None)
-	plt.show()
+# if __name__ == '__main__':
+# 	# load Zachary's Karate graph
+# 	edge_f = '../data/karate.edgelist'
+# 	G = graph_util.loadGraphFromEdgeListTxt(edge_f, directed=False)
+# 	G = G.to_directed()
+# 	res_pre = 'results/testKarate'
+# 	print 'Num nodes: %d, num edges: %d' % (G.number_of_nodes(), G.number_of_edges())
+# 	t1 = time()
+# 	embedding = SDNE(d=2, beta=5, alpha=1e-5, nu1=1e-6, nu2=1e-6, K=3, n_units=[50, 15,], rho=0.3, n_iter=1, xeta=0.01, n_batch=500, modelfile=['./intermediate/enc_model.json', './intermediate/dec_model.json'], weightfile=['./intermediate/enc_weights.hdf5', './intermediate/dec_weights.hdf5'])
+# 	embedding.learn_embedding(graph=G, edge_f=None, is_weighted=True, no_python=True)
+# 	print 'SDNE:\n\tTraining time: %f' % (time() - t1)
+#
+# 	viz.plot_embedding2D(embedding.get_embedding(), di_graph=G, node_colors=None)
+# 	plt.show()
