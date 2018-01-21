@@ -50,4 +50,5 @@ print 'SDNE:\n\tTraining time: %f' % t
 args = input_args(file_path='data/karate.edgelist', output_path='data/karate.emb')
 nv(args)
 
+print('OK')
 
