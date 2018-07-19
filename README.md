@@ -1,3 +1,2 @@
 # NETest
-Some method for network embedding
-hhaha
+Some methods for network embedding
